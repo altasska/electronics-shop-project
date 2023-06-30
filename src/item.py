@@ -24,6 +24,9 @@ class Item:
 
     @name.setter
     def name(self, value: str) -> None:
+        """
+        сеттер для корректной обработки названия товара
+        """
         if len(value) <= 10:
             self._name = value
         else:
@@ -59,5 +62,8 @@ class Item:
 
     @staticmethod
     def string_to_number(value: str) -> int:
+        """
+        метод для преобразования строки в численное значение по целой части
+        """
         s = float(value)
         return int(s)
