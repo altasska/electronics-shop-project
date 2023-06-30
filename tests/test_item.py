@@ -4,7 +4,7 @@ from src.item import Item
 
 def test_total_calculate():
     """
-    тест для проверки работоспособности метода, подсчитывающего общую стоимость конкретного товара
+    Тест для проверки работоспособности метода, подсчитывающего общую стоимость конкретного товара.
     """
     item = Item("Смартфон", 10000, 10)
     total_calculate = item.calculate_total_price()
@@ -21,3 +21,35 @@ def test_discount():
     Item.apply_discount(item)
 
     assert item.price == 8500
+
+
+def test_string_to_number():
+    """
+    тест для корректного преобразования строки в число, используя только целую часть
+    """
+    assert Item.string_to_number('5.6') == 5
+
+
+def test_instantiate_from_csv():
+    """
+    тест для проверки корректности работы с cvs-файлом
+    """
+    Item.instantiate_from_csv()
+    assert len(Item.all) == 5
+
+    item1 = Item.all[0]
+    assert item1.name == "Смартфон"
+    assert item1.price == 100
+    assert item1.quantity == 1
+
+def test_name_setter():
+    """
+    тест для проверки корректности работы сеттера name
+    """
+    item = Item("Телефон", 10000, 5)
+
+    item.name = "Смартфон"
+    assert item.name == "Смартфон"
+
+    item.name = "СуперСмартфонНаВсеВека"
+    assert item.name == "СуперСмарт"
