@@ -53,3 +53,11 @@ def test_name_setter():
 
     item.name = "СуперСмартфонНаВсеВека"
     assert item.name == "СуперСмарт"
+
+def test_repr():
+    item = Item("Телефон", 10000, 5)
+    assert repr(item) == "Item('Телефон', 10000, 5)"
+
+def test_str():
+    item = Item("Телефон", 10000, 5)
+    assert str(item) == 'Телефон'
