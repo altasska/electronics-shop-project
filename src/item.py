@@ -18,6 +18,16 @@ class Item:
         self.quantity = quantity
         self.all.append(self)
 
+    def __add__(self, other):
+        """
+        метод для сложения экземпляров класса
+        (сложение по количеству товара в магазине)
+        """
+        if isinstance(other, Item):
+            return self.quantity + other.quantity
+        else:
+            return None
+
     def __repr__(self):
         return f"{self.__class__.__name__}('{self._name}', {self.price}, {self.quantity})"
 
