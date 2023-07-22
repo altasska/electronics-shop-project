@@ -5,6 +5,16 @@ GOOD_PATH = os.path.join(os.path.dirname(__file__), 'items.csv')
 ABSOLUTE_PATH = os.path.abspath(GOOD_PATH)
 
 
+class InstantiateCSVError(Exception):
+    """
+    класс для пользовательского исключения
+    """
+
+    def __init__(self, message="Файл item.csv поврежден"):
+        self.message = message
+        super().__init__(self.message)
+
+
 class Item:
     """
     Класс для представления товара в магазине.
@@ -68,13 +78,24 @@ class Item:
         Метод для создания объектов класса Item на основе соответствующего csv-файла.
         """
         cls.all = []  # очистка списка объектов перед созданием новых объектов из файла
-        with open(ABSOLUTE_PATH, 'r', newline='') as file:  # У
-            r = csv.DictReader(file)
-            for line in r:
-                name = line['name']
-                price = float(line['price'])
-                quantity = int(line['quantity'])
-                item = cls(name, price, quantity)
+
+        try:
+
+            with open(ABSOLUTE_PATH, 'r', newline='') as file:  # У
+                r = csv.DictReader(file)
+                for line in r:
+                    if 'quantity' not in line:
+                        raise InstantiateCSVError("Файл item.csv поврежден: отсутствует ключ 'quantity'")
+                    name = line['name']
+                    price = float(line['price'])
+                    quantity = int(line['quantity'])
+                    item = cls(name, price, quantity)
+
+        except FileNotFoundError:
+            raise FileNotFoundError("Отсутствует файл item.csv")
+
+        except InstantiateCSVError:
+            raise InstantiateCSVError()
 
     @staticmethod
     def string_to_number(value: str) -> int:
