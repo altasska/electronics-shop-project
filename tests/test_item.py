@@ -1,6 +1,51 @@
 """Здесь надо написать тесты с использованием pytest для модуля item."""
-from src.item import Item
+import pytest
+import src.item
+from src.item import Item, InstantiateCSVError
 from src.phone import Phone
+
+
+@pytest.fixture
+def corrupt_csv_file(tmp_path):
+    """
+    фикстура для создания временного csv-файла с отсутствующим столбцом  quantity
+    """
+    corrupt_file = tmp_path / "items.csv"
+    with open(corrupt_file, 'w', newline='') as file:
+        file.write("name,price\nСмартфон,100\nНоутбук,1000\n")
+    return str(corrupt_file)
+
+
+def test_missing_csv_file(tmp_path):
+    """
+    тест, в котором используется несуществующий файл для возбуждения исключения
+    FileNotFoundError
+    """
+    original_path = src.item.ABSOLUTE_PATH
+    src.item.ABSOLUTE_PATH = str(tmp_path / "something.csv")  # переопределение пути к файлу
+
+    with pytest.raises(FileNotFoundError) as ex:
+        Item.instantiate_from_csv()
+
+    assert "Отсутствует файл item.csv" in str(ex.value)
+
+    src.item.ABSOLUTE_PATH = original_path  # восстановление пути к файлу
+
+
+def test_csv_error(corrupt_csv_file):
+    """
+    тест в котором используется фикстура с "кривым" временным файлом для возбуждения
+    исключения InstantiateCSVError
+    """
+    original_path = src.item.ABSOLUTE_PATH
+    src.item.ABSOLUTE_PATH = corrupt_csv_file
+
+    with pytest.raises(InstantiateCSVError) as ex:
+        Item.instantiate_from_csv()
+
+    assert "Файл item.csv поврежден" in str(ex.value)
+
+    src.item.ABSOLUTE_PATH = original_path
 
 
 def test_total_calculate():
